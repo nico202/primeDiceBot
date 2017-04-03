@@ -1,9 +1,11 @@
 #Login details
 
+# Username+password login not working anymore. Use the token instead.
 # username = "INSERT_USERNAME_HERE"
 # password = "INSERT_PASSWORD_HERE"
 
 token = "INSERT_TOKEN_HERE"
+# Read the readme on how to get it
 
 #How much will this program run?
 max_bet_number = 0          #0 is infinity
