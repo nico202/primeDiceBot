@@ -27,7 +27,10 @@ helpme.config_check(config)
 
 user = primedice.primedice()
 
-user.login(config.username, config.password)
+# user.login(config.username, config.password)
+user.login(config.token)
+# Set the "fairness" random seed
+user.set_seed()
 
 bet_size = config.base_bet
 probability = config.win_chance
@@ -41,6 +44,10 @@ or (bet_size <= maximum_bet):
         print("Insufficient funds! :( Returning to base bet & probability")
         bet_size = config.base_bet
         probability = config.win_chance
+        if bet_size > user.balance:
+            print "You have only %s coin" % user.balance
+            print "While the base bet is %s" % bet_size
+            sys.exit("Impossible to continue. Base bet is more then the current balance")
 
     time.sleep(config.wait_time)
     user.bet_count += 1

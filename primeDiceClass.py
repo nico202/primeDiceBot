@@ -23,6 +23,7 @@ class primedice():
         self.login_url = 'https://api.primedice.com/api/login'
         self.bet_url = 'https://api.primedice.com/api/bet'
         self.info_url = 'https://api.primedice.com/api/users/1'
+        self.seed_url = 'https://api.primedice.com/api/seed'
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36'
         }
@@ -37,26 +38,65 @@ class primedice():
             return answer
 
     def login(self, username, password):
-        self.username = username
-        self.password = password
+        print "Login by username and password is disabled beacuase of reCaptcha"
+        print "You can login using a manually-provided token"
+        sys.exit("Please, read the readme")
+
+        # The following code is disabled right now
+        # self.username = username
+        # self.password = password
+        # post_data = {
+        #     'username':str(username),
+        #     'password':str(password),
+        #     'opt':''
+        # }
+
+        # login_response = self.session_post(self.login_url, post_data).content
+        
+        # try:
+        #     self.token = json.loads(login_response)["access_token"]
+        #     self.bet_url_params = self.bet_url + "?access_token=" + self.token
+        #     self.info_url_params = self.info_url + "?access_token=" + self.token
+
+        #     self.balance = json.loads(\
+        #     self.session.get(self.info_url_params).content\
+        #     )["user"]["balance"]
+
+        #     print "Login successful, token = %s" % (self.token)
+
+        # except:
+        #     if login_response == "Unauthorized":
+        #         sys.exit("Wrong login details")
+        #     elif login_response == "Too many requests.":
+        #         sys.exit("Too many requests. Wait before running the script again")
+        #     else:
+        #         print("Something went wrong, unknown error")
+        #         sys.exit(login_response)
+
+    """
+    Set the 'fairness' random number generator seed. It's strictly
+    required to set it to be able to bet
+    """
+    def set_seed(self, seed = 5164131849335):
         post_data = {
-            'username':str(username),
-            'password':str(password),
-            'opt':''
+            'seed': seed
         }
 
-        login_response = self.session_post(self.login_url, post_data).content
+        result = self.session.post(self.seed_url + "?access_token="+ self.token,
+                                   post_data, headers = self.headers)
+        # debug
+        # print result.content
+
+    def login(self, token):
+        self.token = token
+        self.bet_url_params = self.bet_url + "?access_token=" + self.token
+        self.info_url_params = self.info_url + "?access_token=" + self.token
+
         try:
-            self.token = json.loads(login_response)["access_token"]
-            self.bet_url_params = self.bet_url + "?access_token=" + self.token
-            self.info_url_params = self.info_url + "?access_token=" + self.token
+            self.balance = json.loads(self.session.get(
+                self.info_url_params).content)["user"]["balance"]
 
-            self.balance = json.loads(\
-            self.session.get(self.info_url_params).content\
-            )["user"]["balance"]
-
-            print "Login successful, token = %s" % (self.token)
-
+            print "Login successful, with the provided token %s" % (self.token)
         except:
             if login_response == "Unauthorized":
                 sys.exit("Wrong login details")
@@ -99,9 +139,10 @@ class primedice():
             elif rix.status_code == 400 and rix.content == "Insufficient funds":
                 sys.exit("Insufficient funds")
             else:
-                print "You have to debug this error"
+                print "\nYou have to debug this error"
                 print rix
                 print rix.content
+                sys.exit()
 
         #except:
         #    print "Some error happened processing your request"

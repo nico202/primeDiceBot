@@ -1,7 +1,9 @@
 #Login details
 
-username = "INSERT_USERNAME_HERE"
-password = "INSERT_PASSWORD_HERE"
+# username = "INSERT_USERNAME_HERE"
+# password = "INSERT_PASSWORD_HERE"
+
+token = "INSERT_TOKEN_HERE"
 
 #How much will this program run?
 max_bet_number = 0          #0 is infinity
